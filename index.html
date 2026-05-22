@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification and Morphology of Poxviruses</title>
+    <style>
+        :root {
+            --primary-blue: #003366;
+            --secondary-blue: #00509e;
+            --bg-light: #f0f8ff;
+            --text-dark: #333333;
+            --highlight-red: #d32f2f;
+            --exam-bg: #ffebee;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #222;
+            color: var(--text-dark);
+            overflow: hidden; /* Use JS for smooth snapping */
+        }
+
+        /* Presentation Container */
+        #presentation-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Individual Slide */
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            background-color: #ffffff;
+            position: relative;
+            box-sizing: border-box;
+            padding: 40px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Title Slide Special Formatting */
+        .title-slide {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
+            text-align: center;
+            align-items: center;
+        }
+
+        .title-slide h1 {
+            font-size: 4em;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .title-slide h3 {
+            font-size: 2em;
+            color: var(--secondary-blue);
+            font-weight: 300;
+        }
+
+        .author-tag {
+            position: absolute;
+            bottom: 40px;
+            right: 50px;
+            font-size: 1.4em;
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-style: italic;
+            border-left: 4px solid var(--secondary-blue);
+            padding-left: 15px;
+        }
+
+        /* Standard Slide Formatting */
+        h2.slide-title {
+            color: var(--primary-blue);
+            font-size: 2.8em;
+            border-bottom: 3px solid var(--secondary-blue);
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            align-self: flex-start;
+            width: 100%;
+        }
+
+        .content {
+            flex-grow: 1;
+            font-size: 1.5em;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        ul { margin-top: 0; }
+        li { margin-bottom: 15px; }
+
+        /* Emphasized Text */
+        strong { color: var(--primary-blue); }
+        .highlight { color: var(--highlight-red); font-weight: bold; }
+
+        /* Exam / Viva Box */
+        .exam-point {
+            background-color: var(--exam-bg);
+            border-left: 6px solid var(--highlight-red);
+            padding: 15px 25px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .exam-point-title {
+            color: var(--highlight-red);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        tr:nth-child(even) { background-color: var(--bg-light); }
+
+        /* Image Layouts */
+        .two-column {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        .col { flex: 1; }
+        
+        .img-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .img-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .caption {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Navigation Buttons */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+        .nav-btn {
+            background-color: rgba(0, 51, 102, 0.7);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-btn:hover {
+            background-color: rgba(0, 51, 102, 1);
+        }
+
+        /* Slide Counter */
+        .slide-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            font-size: 1.2em;
+            color: #888;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()">&#9664; Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next &#9654;</button>
+    </div>
+
+    <div id="presentation-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>Classification and Morphology of Poxviruses</h1>
+            <h3>An Academic Medical Presentation</h3>
+            <div class="author-tag">Presentation by<br>Syrpai ryngksai</div>
+        </div>
+
+        <!-- Slide 2: Introduction -->
+        <div class="slide">
+            <h2 class="slide-title">Introduction to Poxviruses</h2>
+            <div class="content">
+                <ul>
+                    <li>Poxviruses are the <strong>largest and most complex</strong> of all medically significant viruses.</li>
+                    <li>They are unique among DNA viruses because they <strong>replicate entirely in the host cell cytoplasm</strong>.</li>
+                    <li><strong>Historical Significance:</strong> They caused Smallpox (Variola), the only infectious disease of humans to be completely eradicated by global vaccination.</li>
+                    <li><strong>Current Importance:</strong> Resurgence of Zoonotic infections (e.g., Monkeypox) and widespread presence of Molluscum contagiosum.</li>
+                </ul>
+                <div class="exam-point">
+                    <div class="exam-point-title">Microbiology Viva Concept</div>
+                    Poxviruses do not need to enter the host nucleus because they carry their own <strong>DNA-dependent RNA polymerase</strong>, allowing transcription in the cytoplasm.
+                </div>
+            </div>
+            <div class="slide-counter">2</div>
+        </div>
+
+        <!-- Slide 3: Classification -->
+        <div class="slide">
+            <h2 class="slide-title">Classification of Poxviruses</h2>
+            <div class="content">
+                <p>Family: <strong><em>Poxviridae</em></strong></p>
+                <p>Divided into two subfamilies: <em>Chordopoxvirinae</em> (vertebrates) and <em>Entomopoxvirinae</em> (insects).</p>
+                
+                <table>
+                    <tr>
+                        <th>Genus</th>
+                        <th>Important Human Pathogens</th>
+                        <th>Primary Host / Source</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Orthopoxvirus</strong></td>
+                        <td>Variola (Smallpox), Vaccinia, Monkeypox, Cowpox</td>
+                        <td>Humans, Rodents, Cattle</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parapoxvirus</strong></td>
+                        <td>Orf virus, Pseudocowpox</td>
+                        <td>Sheep, Goats, Dairy cows</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Molluscipoxvirus</strong></td>
+                        <td>Molluscum contagiosum virus (MCV)</td>
+                        <td>Humans strictly</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Yatapoxvirus</strong></td>
+                        <td>Tanapox, Yaba monkey tumor virus</td>
+                        <td>Monkeys</td>
+                    </tr>
+                </table>
+
+                <div class="exam-point">
+                    <div class="exam-point-title">Mnemonic for Human Genera</div>
+                    <strong>O</strong>h <strong>P</strong>lease <strong>M</strong>ake <strong>Y</strong>ogurt (<strong>O</strong>rthopox, <strong>P</strong>arapox, <strong>M</strong>olluscipox, <strong>Y</strong>atapox)
+                </div>
+            </div>
+            <div class="slide-counter">3</div>
+        </div>
+
+        <!-- Slide 4: Morphology & Structure -->
+        <div class="slide">
+            <h2 class="slide-title">Morphology of Poxviruses</h2>
+            <div class="content two-column">
+                <div class="col">
+                    <ul>
+                        <li><strong>Size:</strong> 200–300 nm × 250–350 nm (Large enough to be seen under a light microscope).</li>
+                        <li><strong>Shape:</strong> Brick-shaped or oval (Parapoxviruses are ovoid).</li>
+                        <li><strong>Symmetry:</strong> <em>Complex symmetry</em> (Neither strictly icosahedral nor helical).</li>
+                        <li><strong>Core:</strong> Dumbbell-shaped core containing the viral DNA.</li>
+                        <li><strong>Lateral Bodies:</strong> Two proteinaceous structures situated in the concavities of the core.</li>
+                        <li><strong>Envelope:</strong> Complex outer membrane showing surface ridges or "tubules".</li>
+                    </ul>
+                </div>
+                <div class="col img-container">
+                    <!-- High quality Wikimedia Commons EM image of Poxvirus -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Poxvirus.jpg/800px-Poxvirus.jpg" alt="Electron Micrograph of Poxvirus">
+                    <div class="caption">Transmission Electron Micrograph (TEM) of a Poxvirus virion. Note the brick shape and complex surface ridges.</div>
+                </div>
+            </div>
+            <div class="slide-counter">4</div>
+        </div>
+
+        <!-- Slide 5: Genome & Replication -->
+        <div class="slide">
+            <h2 class="slide-title">Genome & Replication Overview</h2>
+            <div class="content">
+                <ul>
+                    <li><strong>Genome:</strong> Linear, double-stranded DNA (dsDNA). Ends are covalently closed (hairpin loops).</li>
+                    <li><strong>Site of Replication:</strong> Host cell <span class="highlight">cytoplasm</span>.</li>
+                </ul>
+                <p><strong>Steps of Replication:</strong></p>
+                <ol>
+                    <li><strong>Entry:</strong> Fusion with plasma membrane.</li>
+                    <li><strong>Uncoating:</strong> Occurs in two stages. First stage removes outer membrane, second stage releases DNA (requires viral uncoating protein).</li>
+                    <li><strong>Synthesis:</strong> Viral replication occurs in isolated localized cytoplasmic structures known as "viral factories" or <strong>Guarnieri bodies</strong>.</li>
+                    <li><strong>Assembly & Release:</strong> Assembled in cytoplasm, wrapped in Golgi membrane, released by cell lysis or exocytosis.</li>
+                </ol>
+            </div>
+            <div class="slide-counter">5</div>
+        </div>
+
+        <!-- Slide 6: Important Human Diseases (Cases) -->
+        <div class="slide">
+            <h2 class="slide-title">Important Clinical Cases & Diseases</h2>
+            <div class="content two-column">
+                <div class="col">
+                    <ul>
+                        <li><strong>Smallpox (Variola):</strong> Historically fatal. Rash evolved sequentially: Macule &rarr; Papule &rarr; Vesicle &rarr; Pustule &rarr; Crust. Centrifugal distribution.</li>
+                        <li><strong>Monkeypox (Mpox):</strong> Zoonotic. Clinically resembles smallpox but features prominent <span class="highlight">Lymphadenopathy</span> (swollen lymph nodes) before the rash.</li>
+                        <li><strong>Molluscum Contagiosum:</strong> Benign epidermal tumors. Pearly, flesh-colored, dome-shaped papules with central umbilication.</li>
+                    </ul>
+                </div>
+                <div class="col img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Monkeypox_lesions.jpg/800px-Monkeypox_lesions.jpg" alt="Monkeypox lesions on skin">
+                    <div class="caption">Classic vesiculopustular lesions seen in Monkeypox virus infection.</div>
+                </div>
+            </div>
+            <div class="slide-counter">6</div>
+        </div>
+
+        <!-- Slide 7: Laboratory Diagnosis -->
+        <div class="slide">
+            <h2 class="slide-title">Laboratory Diagnosis</h2>
+            <div class="content two-column">
+                <div class="col">
+                    <ul>
+                        <li><strong>Microscopy (Histopathology):</strong> Staining of tissue samples to observe specific viral inclusion bodies.
+                            <ul>
+                                <li><em>Guarnieri bodies</em> (Smallpox/Vaccinia): Intracytoplasmic, eosinophilic.</li>
+                                <li><em>Henderson-Paterson bodies</em> (Molluscum): Large hyaline masses in epidermal cells.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Electron Microscopy (EM):</strong> Rapid identification of poxvirus particles from vesicular fluid.</li>
+                        <li><strong>Molecular Methods:</strong> <span class="highlight">PCR</span> is the gold standard for specific diagnosis (e.g., differentiating Mpox from Varicella).</li>
+                        <li><strong>Viral Isolation:</strong> Growth on Chorioallantoic Membrane (CAM) of chick embryos produces specific "pocks".</li>
+                    </ul>
+                </div>
+                <div class="col img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Molluscum_contagiosum_-_mag_-_400x.jpg/800px-Molluscum_contagiosum_-_mag_-_400x.jpg" alt="Histology of Molluscum contagiosum">
+                    <div class="caption">H&E Stain showing large, distinct Henderson-Paterson inclusion bodies (Molluscum bodies).</div>
+                </div>
+            </div>
+            <div class="slide-counter">7</div>
+        </div>
+
+        <!-- Slide 8: Prevention & Control -->
+        <div class="slide">
+            <h2 class="slide-title">Prevention and Control</h2>
+            <div class="content">
+                <ul>
+                    <li><strong>Smallpox Eradication:</strong> Achieved through a global vaccination campaign using the live, attenuated <strong>Vaccinia virus</strong>. Declared eradicated in 1980.</li>
+                    <li><strong>Mpox Vaccination:</strong> JYNNEOS vaccine (Modified Vaccinia Ankara - MVA) is a non-replicating viral vector vaccine currently used for Monkeypox prevention.</li>
+                    <li><strong>Cross-Immunity:</strong> Infection or vaccination with one Orthopoxvirus (like Vaccinia) provides substantial protection against others (like Variola or Monkeypox).</li>
+                    <li><strong>Molluscum Management:</strong> Often self-limiting. Treated via cryotherapy, curettage, or topical agents (Cantharidin) in severe/cosmetic cases.</li>
+                </ul>
+            </div>
+            <div class="slide-counter">8</div>
+        </div>
+
+        <!-- Slide 9: Viva Questions -->
+        <div class="slide">
+            <h2 class="slide-title">Exam & Viva Q&A Focus</h2>
+            <div class="content">
+                <div class="exam-point" style="margin: 10px 0;">
+                    <div class="exam-point-title">Q1: How does Poxvirus morphology differ from other viruses?</div>
+                    <strong>Answer:</strong> It is the largest virus, possesses "complex" symmetry (neither strictly icosahedral nor helical), has a brick/oval shape, and contains a dumbbell-shaped core with lateral bodies.
+                </div>
+                <div class="exam-point" style="margin: 10px 0;">
+                    <div class="exam-point-title">Q2: Why do DNA poxviruses replicate in the cytoplasm?</div>
+                    <strong>Answer:</strong> Unlike other DNA viruses that require host nuclear enzymes, poxviruses carry their own DNA-dependent RNA polymerase and enzymes needed for DNA replication.
+                </div>
+                <div class="exam-point" style="margin: 10px 0;">
+                    <div class="exam-point-title">Q3: Name the inclusion bodies associated with Poxviruses.</div>
+                    <strong>Answer:</strong> Guarnieri bodies (Vaccinia/Variola) and Henderson-Paterson bodies (Molluscum contagiosum). Both are intracytoplasmic.
+                </div>
+                <div class="exam-point" style="margin: 10px 0;">
+                    <div class="exam-point-title">Q4: Clinical difference between Smallpox and Chickenpox?</div>
+                    <strong>Answer:</strong> Smallpox rash is centrifugal (dense on limbs/face), lesions are deep-seated, and all lesions in one area are at the <em>same stage</em> of development. Chickenpox (Herpesvirus) is centripetal and lesions show <em>pleomorphism</em> (different stages at once).
+                </div>
+            </div>
+            <div class="slide-counter">9</div>
+        </div>
+
+        <!-- Slide 10: References and Image Sources -->
+        <div class="slide">
+            <h2 class="slide-title">Image Sources & References</h2>
+            <div class="content">
+                <h3>References</h3>
+                <ul>
+                    <li>Apurb Sastry & Sandhya Bhat - <em>Essentials of Medical Microbiology</em></li>
+                    <li>Jawetz, Melnick, & Adelberg's - <em>Medical Microbiology</em></li>
+                    <li>Ananthanarayan and Paniker's - <em>Textbook of Microbiology</em></li>
+                </ul>
+
+                <h3>Image Sources</h3>
+                <ul>
+                    <li>
+                        <strong>Poxvirus EM:</strong> Wikimedia Commons<br>
+                        <a href="https://commons.wikimedia.org/wiki/File:Poxvirus.jpg" target="_blank" style="color:var(--secondary-blue); text-decoration:none;">Click here for source: Transmission Electron Micrograph (TEM) of a Poxvirus</a>
+                    </li>
+                    <li>
+                        <strong>Monkeypox Lesions:</strong> Wikimedia Commons (CDC)<br>
+                        <a href="https://commons.wikimedia.org/wiki/File:Monkeypox_lesions.jpg" target="_blank" style="color:var(--secondary-blue); text-decoration:none;">Click here for source: Monkeypox Lesions Case</a>
+                    </li>
+                    <li>
+                        <strong>Molluscum Histology:</strong> Wikimedia Commons (Nephron)<br>
+                        <a href="https://commons.wikimedia.org/wiki/File:Molluscum_contagiosum_-_mag_-_400x.jpg" target="_blank" style="color:var(--secondary-blue); text-decoration:none;">Click here for source: H&E Stain Molluscum Bodies</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="slide-counter">10</div>
+        </div>
+
+        <!-- Slide 11: Thank You -->
+        <div class="slide title-slide">
+            <h1 style="font-size: 5em;">Thank You!</h1>
+            <h3 style="color: #666; margin-top: 30px;">Open for Questions</h3>
+            <div class="author-tag">Presentation by<br>Syrpai ryngksai</div>
+            <div class="slide-counter">11</div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for Navigation -->
+    <script>
+        const container = document.getElementById('presentation-container');
+        
+        function nextSlide() {
+            container.scrollBy({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        function prevSlide() {
+            container.scrollBy({
+                top: -window.innerHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add keyboard navigation (Arrow Keys)
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
